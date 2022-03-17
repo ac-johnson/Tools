@@ -15,11 +15,11 @@ rhost = 'acjohnson16@chinook.alaska.edu'
 rfloc = '/import/c1/ICESHEET/ICESHEET/uaf-antarctica/filron/filron_runs/picoruns'
 lfloc = '/media/acjohnson16/Clathrate/APModel_util/filron/ens'
 
-runlist = range(20)
-# templist = [str(i)+'C' for i in range(7)]
-# templist.append('rcp26')
-# templist.append('rcp85')
-templist=['0C']
+runlist = range(100)
+templist = [str(i)+'C' for i in range(7)]
+templist.append('rcp26')
+templist.append('rcp85')
+# templist=['0C']
 
 resultfull = [f'result_{i}.nc' for i in runlist]
 extrafull = [f'extra_{i}.nc' for i in runlist]
