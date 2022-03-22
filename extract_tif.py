@@ -12,20 +12,27 @@ import glob
 import os
 import shutil
 
-inloc = '/home/acjohnson16/Documents/SARtest/Kenn_21/indata/'
-outloc = '/home/acjohnson16/Documents/SARtest/Kenn_21/ASF_RTC/'
 
-infile = glob.glob(f'{inloc}*')
-for file in infile:
-    # print(file)
-    # namelist = 
-    with ZipFile(file) as z:
-        z = ZipFile(file)
-        zname = [name for name in z.namelist() if name[-6:]=='VV.tif'][0]
-        # z.extract()
+def extracttif(inloc,outloc,pol='VV'):
+
+    infile = glob.glob(f'{inloc}*')
+    endstr = pol+'.tif'
+    for file in infile:
+        # print(file)
+        # namelist = 
+        with ZipFile(file) as z:
+            z = ZipFile(file)
+            zname = [name for name in z.namelist() if name[-6:]==endstr][0]
+            # z.extract()
+        
+            filename = os.path.basename(zname)
+            source = z.open(zname)
+            target = open(os.path.join(outloc, filename), "wb")
+            with source, target:
+                shutil.copyfileobj(source, target)
+
+if __name__=='__main__':
+    inloc = '/home/acjohnson16/Documents/SARtest/Kenn_21alt/indata/'
+    outloc = '/home/acjohnson16/Documents/SARtest/Kenn_21alt/ASF_RTC_VH/'
     
-        filename = os.path.basename(zname)
-        source = z.open(zname)
-        target = open(os.path.join(outloc, filename), "wb")
-        with source, target:
-            shutil.copyfileobj(source, target)
+    extracttif(inloc, outloc,'VH')
