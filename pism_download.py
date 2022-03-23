@@ -15,6 +15,8 @@ rhost = 'acjohnson16@chinook.alaska.edu'
 rfloc = '/import/c1/ICESHEET/ICESHEET/uaf-antarctica/filron/filron_runs/picoruns'
 lfloc = '/media/acjohnson16/Clathrate/APModel_util/filron/ens'
 
+os.system('partprobe -d') #Hopefully this will wake up the drive if asleep
+
 runlist = range(100)
 templist = [str(i)+'C' for i in range(7)]
 templist.append('rcp26')
@@ -30,6 +32,7 @@ for T in templist:
     resultlist = glob.glob(lfloc+f'/ocean_{T}/result*.nc')
     extralist = glob.glob(lfloc+f'/ocean_{T}/extra*.nc') 
     tslist = glob.glob(lfloc+f'/ocean_{T}/timeseries*.nc') 
+    print(f'Runs already downloaded: {len(resultlist)}')
 
     resultdone = ['result_'+i.split('result_')[1] for i in resultlist]
     extradone = ['extra_'+i.split('extra_')[1] for i in extralist]
@@ -43,9 +46,9 @@ for T in templist:
         rts = f'{rfloc}/ocean_{T}/extra/timeseries_{i}.nc'
         
         if resultfull[i] not in resultdone:
-            print(f'Copying result_{i}')
+            # print(f'Copying result_{i}')
             os.system(f'scp -i ~/.ssh/id_rsa.pub {rhost}:{rresult} {lfloc}/ocean_{T}/')
         if extrafull[i] not in extradone:
             os.system(f'scp -i ~/.ssh/id_rsa.pub {rhost}:{rextra} {lfloc}/ocean_{T}/')
-        if tsfull[i] not in tsdone:
-            os.system(f'scp -i ~/.ssh/id_rsa.pub {rhost}:{rts} {lfloc}/ocean_{T}/')
+        # if tsfull[i] not in tsdone:
+        os.system(f'scp -i ~/.ssh/id_rsa.pub {rhost}:{rts} {lfloc}/ocean_{T}/')
