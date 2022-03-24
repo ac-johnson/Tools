@@ -32,7 +32,13 @@ def extracttif(inloc,outloc,pol='VV'):
                 shutil.copyfileobj(source, target)
 
 if __name__=='__main__':
-    inloc = '/home/acjohnson16/Documents/SARtest/Kenn_21alt/indata/'
-    outloc = '/home/acjohnson16/Documents/SARtest/Kenn_21alt/ASF_RTC_VH/'
+    dirname = 'Greenland_test1'
+    pol = 'HV'
     
-    extracttif(inloc, outloc,'VH')
+    inloc = f'/home/acjohnson16/Documents/SARtest/{dirname}/indata/'
+    outloc = f'/home/acjohnson16/Documents/SARtest/{dirname}/ASF_RTC{"" if (pol=="VV" or pol=="HH") else "_"+pol}/'
+    
+    # inloc = '/home/acjohnson16/Documents/SARtest/Kenn_21alt/indata/'
+    # outloc = '/home/acjohnson16/Documents/SARtest/Kenn_21alt/ASF_RTC_VH/'
+    
+    extracttif(inloc, outloc, pol)

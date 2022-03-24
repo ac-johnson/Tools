@@ -63,7 +63,7 @@ def subtractdb(file1,file2,file3):
 if __name__=='__main__':
     doconvert = True
     if doconvert == True:
-        imglist = glob.glob('/home/acjohnson16/Documents/SARtest/Kenn_21alt/ASF_RTC_VH/*')
+        imglist = glob.glob('/home/acjohnson16/Documents/SARtest/Greenland_test1/ASF_RTC_HV/*')
         for img in imglist:
             print(img)
             converttodb(img)

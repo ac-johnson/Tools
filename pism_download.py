@@ -17,10 +17,12 @@ lfloc = '/media/acjohnson16/Clathrate/APModel_util/filron/ens'
 
 os.system('partprobe -d') #Hopefully this will wake up the drive if asleep
 
-runlist = range(100)
+# runlist = range(100)
+runlist = range(26)
 templist = [str(i)+'C' for i in range(7)]
 templist.append('rcp26')
 templist.append('rcp85')
+templist = ['e0C']
 # templist=['0C']
 
 resultfull = [f'result_{i}.nc' for i in runlist]
@@ -49,6 +51,9 @@ for T in templist:
             # print(f'Copying result_{i}')
             os.system(f'scp -i ~/.ssh/id_rsa.pub {rhost}:{rresult} {lfloc}/ocean_{T}/')
         if extrafull[i] not in extradone:
-            os.system(f'scp -i ~/.ssh/id_rsa.pub {rhost}:{rextra} {lfloc}/ocean_{T}/')
+            if os.path.exists(f'{lfloc}/ocean_{T}/result_{i}.nc'):
+                os.system(f'scp -i ~/.ssh/id_rsa.pub {rhost}:{rextra} {lfloc}/ocean_{T}/')
+            else:
+                print(f'Run {i} extra file exists but result is missing.')
         # if tsfull[i] not in tsdone:
         os.system(f'scp -i ~/.ssh/id_rsa.pub {rhost}:{rts} {lfloc}/ocean_{T}/')
