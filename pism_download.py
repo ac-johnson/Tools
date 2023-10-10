@@ -17,28 +17,42 @@ lfloc = '/media/acjohnson16/Clathrate/APModel_util/filron/ens'
 
 os.system('partprobe -d') #Hopefully this will wake up the drive if asleep
 
-# runlist = range(100)
-runlist = range(26)
+runlist = range(100)
 templist = [str(i)+'C' for i in range(7)]
 templist.append('rcp26')
 templist.append('rcp85')
-templist = ['e0C']
+
+# runlist = range(26)
+# templist = ['e0C']
+
 # templist=['0C']
 
 resultfull = [f'result_{i}.nc' for i in runlist]
 extrafull = [f'extra_{i}.nc' for i in runlist]
 tsfull = [f'timeseries_{i}.nc' for i in runlist]
 
+no_overwrite = False
+
 for T in templist:
     print(T)
-    resultlist = glob.glob(lfloc+f'/ocean_{T}/result*.nc')
-    extralist = glob.glob(lfloc+f'/ocean_{T}/extra*.nc') 
-    tslist = glob.glob(lfloc+f'/ocean_{T}/timeseries*.nc') 
-    print(f'Runs already downloaded: {len(resultlist)}')
+    if no_overwrite==True:
+        print('Checking existing runs')
+        resultlist = glob.glob(lfloc+f'/ocean_{T}/result*.nc')
+        extralist = glob.glob(lfloc+f'/ocean_{T}/extra*.nc') 
+        tslist = glob.glob(lfloc+f'/ocean_{T}/timeseries*.nc') 
 
-    resultdone = ['result_'+i.split('result_')[1] for i in resultlist]
-    extradone = ['extra_'+i.split('extra_')[1] for i in extralist]
-    tsdone = ['timeseries_'+i.split('timeseries_')[1] for i in tslist]
+        resultdone = ['result_'+i.split('result_')[1] for i in resultlist]
+        extradone = ['extra_'+i.split('extra_')[1] for i in extralist]
+        tsdone = ['timeseries_'+i.split('timeseries_')[1] for i in tslist]
+    else:
+        print('not checking existing runs. Files will be overwritten.')
+        resultlist = []
+        extralist = []
+        tslist = []
+        resultdone = []
+        extradone = []
+        tsdone = []
+    print(f'Runs already downloaded: {len(resultlist)}')
 
     for i in runlist:
         # if i%10==0:

@@ -76,14 +76,21 @@ def convertcolormap(filename,ticks=None,rangelim=None, plotcb=True,
     return cmap1,norm1
 
 if __name__ == '__main__':
-    fname = 'test_colors.txt'
+    fname = '/home/acjohnson16/Documents/Chapter3/test_colors3.txt'
+    ticklist = [0,300,600,900,1200,1500,1800,2100]
+    ticklist = [0,250,500,750,1000,1250,1500,1750,2000,2200]
+    ticklist = [0,400,800,1200,1600,2000,2200]
+    convertcolormap(fname,rangelim=[0,2200],ticks=ticklist,
+                    label='Ice speed (m a$^{-1}$)',
+                    aspect=8,fontsize=32,
+                    ticklabelsize=25)
 
 
-    fname = 'itslive_colors.txt'
+    # fname = 'itslive_colors.txt'
     # convertcolormap(fname)
-    ticks = [0,100,200,300,500,750,1000,1250,1500,1750,2000]
-    convertcolormap(fname,rangelim=[0,2000],ticks=ticks,label='Ice speed (m a$^{-1}$)',
-                    aspect=8,fontsize=32,ticklabelsize=25)
+    # ticks = [0,100,200,300,500,750,1000,1250,1500,1750,2000]
+    # convertcolormap(fname,rangelim=[0,2000],ticks=ticks,label='Ice speed (m a$^{-1}$)',
+    #                 aspect=8,fontsize=32,ticklabelsize=25)
     
     
     
