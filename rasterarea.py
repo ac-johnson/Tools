@@ -40,6 +40,38 @@ fbox = [[-148.844929383,69.154343897],
         [-148.842678764,69.154323342]] #happy valley
 fboxcenter = [664946,7677215] #happy valley
 
+# fieldsites = ['HV','HVE','IC','SM']
+# fieldsitenames = ['Happy Valley','Happy Valley East','Ice Cut','Slope Mountain']
+#fieldsitelocs = [[69.15478,-148.84382],[69.15531,-148.83792],[69.04113,-148.83162],[68.43289,-148.94216]]
+
+
+fieldsites = {'HappyValley':   
+         {'site' : 'HV',
+          'center' : [69.15478,-148.84382],
+          'fieldbox' : [[-148.844929383,69.154343897],[-148.84490879,69.15523914],
+                        [-148.842675077,69.155214775],[-148.842678764,69.154323342]]},
+    
+    'HappyValleyEast':   
+             {'site' : 'HVE',
+              'center' : [69.15531,-148.83792],
+              'fieldbox' : [[-148.844929383,69.154343897],[-148.84490879,69.15523914],
+                            [-148.842675077,69.155214775],[-148.842678764,69.154323342]]},
+             
+    'IceCut':   
+             {'site' : 'IC',
+              'center' : [69.04113,-148.83162],
+              'fieldbox' : [[-148.844929383,69.154343897],[-148.84490879,69.15523914],
+                            [-148.842675077,69.155214775],[-148.842678764,69.154323342]]},
+             
+    'SlopeMountain':   
+             {'site' : 'SM',
+              'center' : [68.43289,-148.94216],
+              'fieldbox' : [[-148.844929383,69.154343897],[-148.84490879,69.15523914],
+                            [-148.842675077,69.155214775],[-148.842678764,69.154323342]]}
+}
+
+
+
 fbox = CoordConvert(fbox,'4326','32605')
 
 #get the x,y index values of point closest to the pixel
@@ -50,17 +82,46 @@ ycind = min(range(len(yvc)), key=lambda i: abs(yvc[i]-fboxcenter[1]))
 # fboxy = [i[1] for i in fbox]
 # mxlen = (np.max(fboxx)-np.min(fboxy))
 
-#get max distance between points
+#get max distance between points of field box
 maxdist = np.max([np.sqrt((i[0]-j[0])**2+(i[1]-j[1])**2) for i in fbox for j in fbox])
 
 #half windows 
-windowx = int(np.ceil(maxdist/np.abs(x_size))+1)
-windowy = int(np.ceil(maxdist/np.abs(y_size))+1)
+windowx = int(np.ceil(maxdist/np.abs(x_size)))
+windowy = int(np.ceil(maxdist/np.abs(y_size)))
 
-squares = [Polygon([(xve[i], yve[j]), (xve[i+1], yve[j]), 
-                    (xve[i+1], yve[j+1]), (xve[i], yve[j+1])])
-                    for i in range(xcind-windowx,xcind+windowx) 
-                    for j in range(ycind-windowy,ycind+windowy)]
+cilist = []
+cjlist = []
+cij = []  #cij is the vector that you really want
+
+fpoly = Polygon(fbox)
+farea = fpoly.area
+overlap=0
+
+for i in range(ycind-windowy,ycind+windowy):
+    for j in range(xcind-windowx,xcind+windowx):
+        cilist.append(i)
+        cjlist.append(j)
+        
+        #create a polygon of the box around this area
+        square = Polygon([(xve[j], yve[i]), (xve[j+1], yve[i]), 
+                          (xve[j+1], yve[i+1]), (xve[j], yve[i+1])])
+        
+        overlap = square.intersection(fpoly).area
+        cij.append(overlap/farea)
+        print(f'{i},{j}: {overlap/farea:.3f}')
+
+cilist,cjlist,cij = np.array(cilist),np.array(cjlist),np.array(cij)
+
+from matplotlib import pyplot as plt
+plt.figure()
+plt.imshow(cij.reshape((4,4)))
+plt.colorbar()
+    
+
+# squares = [Polygon([(xve[i], yve[j]), (xve[i+1], yve[j]), 
+#                     (xve[i+1], yve[j+1]), (xve[i], yve[j+1])])
+#                     for i in range(xcind-windowx,xcind+windowx) 
+#                     for j in range(ycind-windowy,ycind+windowy)]
 
 # test = [[(xve[i], yve[j]), (xve[i+1], yve[j]), 
 #                     (xve[i+1], yve[j+1]), (xve[i], yve[j+1])]
