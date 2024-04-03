@@ -15,6 +15,7 @@ from geo_utils import getEPSG,CoordConvert
 #first task is function for getting the xy vects or grid
 
 file = '/home/acjohnson16/Projects/GIS/area/S1AA_20230627T164402_20230709T164403_VVP012_INT80_G_ueF_93ED_amp.tiff'
+site = 'SlopeMountain'
 
 projnum = getEPSG(file)
 
@@ -34,11 +35,11 @@ yvc = np.arange(upper_left_y,upper_left_y+y_size*asz[0],y_size) #center points o
 yve = np.arange(upper_left_y-y_size/2,upper_left_y+y_size*asz[0]+y_size/2,y_size) #edges
 
 
-fbox = [[-148.844929383,69.154343897],
-        [-148.84490879,69.15523914],
-        [-148.842675077,69.155214775],
-        [-148.842678764,69.154323342]] #happy valley
-fboxcenter = [664946,7677215] #happy valley
+# fbox = [[-148.844929383,69.154343897],
+#         [-148.84490879,69.15523914],
+#         [-148.842675077,69.155214775],
+#         [-148.842678764,69.154323342]] #happy valley
+# fboxcenter = [664946,7677215] #happy valley
 
 # fieldsites = ['HV','HVE','IC','SM']
 # fieldsitenames = ['Happy Valley','Happy Valley East','Ice Cut','Slope Mountain']
@@ -47,32 +48,45 @@ fboxcenter = [664946,7677215] #happy valley
 
 fieldsites = {'HappyValley':   
          {'site' : 'HV',
-          'center' : [69.15478,-148.84382],
-          'fieldbox' : [[-148.844929383,69.154343897],[-148.84490879,69.15523914],
-                        [-148.842675077,69.155214775],[-148.842678764,69.154323342]]},
+          'center' : [-148.84382,69.15478],
+          'fieldbox' : [[-148.844929383,69.154343897],
+                        [-148.84490879,69.15523914],
+                        [-148.842675077,69.155214775],
+                        [-148.842678764,69.154323342]]},
     
     'HappyValleyEast':   
              {'site' : 'HVE',
-              'center' : [69.15531,-148.83792],
-              'fieldbox' : [[-148.844929383,69.154343897],[-148.84490879,69.15523914],
-                            [-148.842675077,69.155214775],[-148.842678764,69.154323342]]},
+              'center' : [-148.83792,69.15531],
+              'fieldbox' : [[-148.839074425,69.154864330],
+                            [-148.839027044,69.155759365],
+                            [-148.836757989,69.155746693],
+                            [-148.836805484,69.154851588]]},
              
     'IceCut':   
              {'site' : 'IC',
-              'center' : [69.04113,-148.83162],
-              'fieldbox' : [[-148.844929383,69.154343897],[-148.84490879,69.15523914],
-                            [-148.842675077,69.155214775],[-148.842678764,69.154323342]]},
+              'center' : [-148.83162,69.04113],
+              'fieldbox' : [[-148.83260857,69.04065465],
+                            [-148.832818731,69.041546254],
+                            [-148.830654865,69.041616945],
+                            [-148.83044576,69.04072424]]},
              
     'SlopeMountain':   
              {'site' : 'SM',
-              'center' : [68.43289,-148.94216],
-              'fieldbox' : [[-148.844929383,69.154343897],[-148.84490879,69.15523914],
-                            [-148.842675077,69.155214775],[-148.842678764,69.154323342]]}
+              'center' : [-148.94216,68.73289],
+              'fieldbox' : [[-148.942000691,68.732265882],
+                            [-148.943792075,68.732729144],
+                            [-148.942386524,68.733467455],
+                            [-148.940617115,68.733009025]]}
 }
 
 
+fieldsite = fieldsites[site]
 
-fbox = CoordConvert(fbox,'4326','32605')
+fbox = fieldsite['fieldbox']
+fboxcenter = fieldsite['center']
+    
+fbox = CoordConvert(fbox,'4326',projnum)
+fboxcenter = CoordConvert([fboxcenter],'4326',projnum)[0]
 
 #get the x,y index values of point closest to the pixel
 xcind = min(range(len(xvc)), key=lambda i: abs(xvc[i]-fboxcenter[0]))
@@ -111,6 +125,8 @@ for i in range(ycind-windowy,ycind+windowy):
         print(f'{i},{j}: {overlap/farea:.3f}')
 
 cilist,cjlist,cij = np.array(cilist),np.array(cjlist),np.array(cij)
+
+np.save(f'boxweights_{fieldsites["site"]}.npy')
 
 from matplotlib import pyplot as plt
 plt.figure()
