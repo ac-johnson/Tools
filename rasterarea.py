@@ -15,24 +15,32 @@ from geo_utils import getEPSG,CoordConvert
 #first task is function for getting the xy vects or grid
 
 file = '/home/acjohnson16/Projects/GIS/area/S1AA_20230627T164402_20230709T164403_VVP012_INT80_G_ueF_93ED_amp.tiff'
-site = 'SlopeMountain'
+site = 'IceCut'
 
 projnum = getEPSG(file)
 
 #get XY vectors
 r = gdal.Open(file)
 # band = r.GetRasterBand(1)
-
 (upper_left_x, x_size, x_rotation, upper_left_y, y_rotation, y_size) = r.GetGeoTransform()
 # print(r.GetGeoTransform())
 asz = np.shape(r.ReadAsArray())
 # asz
 
+# #OLD LISTS
+# #these are not the center points. these are the edges
 xvc = np.arange(upper_left_x,upper_left_x+x_size*asz[1],x_size) #center points of pixels
 xve = np.arange(upper_left_x-x_size/2,upper_left_x+x_size*asz[1]+x_size/2,x_size) #edges
 
 yvc = np.arange(upper_left_y,upper_left_y+y_size*asz[0],y_size) #center points of pixels
 yve = np.arange(upper_left_y-y_size/2,upper_left_y+y_size*asz[0]+y_size/2,y_size) #edges
+
+#NEW COORD VECTS
+# xvc = np.arange(upper_left_x+x_size/2,upper_left_x+x_size/2+x_size*asz[1],x_size) #center points of pixels
+# xve = np.arange(upper_left_x,upper_left_x+x_size*(asz[1]+1),x_size) #edges
+
+# yvc = np.arange(upper_left_y+y_size/2,upper_left_y+y_size/2+y_size*asz[0],y_size) #center points of pixels
+# yve = np.arange(upper_left_y,upper_left_y+y_size*(asz[0]+1),y_size) #edges
 
 
 # fbox = [[-148.844929383,69.154343897],
@@ -88,6 +96,7 @@ fboxcenter = fieldsite['center']
 fbox = CoordConvert(fbox,'4326',projnum)
 fboxcenter = CoordConvert([fboxcenter],'4326',projnum)[0]
 
+
 #get the x,y index values of point closest to the pixel
 xcind = min(range(len(xvc)), key=lambda i: abs(xvc[i]-fboxcenter[0]))
 ycind = min(range(len(yvc)), key=lambda i: abs(yvc[i]-fboxcenter[1]))
@@ -126,13 +135,25 @@ for i in range(ycind-windowy,ycind+windowy):
 
 cilist,cjlist,cij = np.array(cilist),np.array(cjlist),np.array(cij)
 
-np.save(f'boxweights_{fieldsites["site"]}.npy')
+print(f'{site} area: {farea} m2')
+
+np.save(f'boxweights_{fieldsite["site"]}.npy',(cilist,cjlist,cij))
 
 from matplotlib import pyplot as plt
 plt.figure()
 plt.imshow(cij.reshape((4,4)))
 plt.colorbar()
     
+
+refpoint = np.array([666923.0,7651392.0])
+# refpoint = np.array([666920.0,7651400.0])
+xrind = min(range(len(xvc)), key=lambda i: abs(xvc[i]-refpoint[0]))
+yrind = min(range(len(yvc)), key=lambda i: abs(yvc[i]-refpoint[1]))
+
+print(f'ref point by method: {yrind}, {xrind}')
+
+
+#will students work on monday? Tune in next week to find out
 
 # squares = [Polygon([(xve[i], yve[j]), (xve[i+1], yve[j]), 
 #                     (xve[i+1], yve[j+1]), (xve[i], yve[j+1])])
