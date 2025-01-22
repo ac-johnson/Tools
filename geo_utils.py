@@ -65,6 +65,7 @@ def makeWKT(tl,sz,useproj,inproj=4326,outproj=4326):
     br = [tlx+sz,tly-sz]
     bl = [tlx,tly-sz]
     box = [tl,tr,br,bl,tl]
+    cp = [tl[0]+sz/2,tl[1]-sz/2]
 
     #convert box back to latlon and make string
     wktstr = 'POLYGON(('
@@ -78,6 +79,10 @@ def makeWKT(tl,sz,useproj,inproj=4326,outproj=4326):
         wktstr = wktstr + f'{plon:.4f} {plat:.4f},'
     wktstr = wktstr[:-1]
     wktstr = wktstr+'))'
+    # print(f'Center point: {tl[0]+sz/2:.4f}, {tl[1]-sz/2:.4f}')
+    cp = coordConvert([[cp[1],cp[0]]],useproj,outproj)[0]
+    print(cp)
+    print(f'Center point: {cp[1]:.4f}, {cp[0]:.4f}')
     return wktstr
     
     #makestring
